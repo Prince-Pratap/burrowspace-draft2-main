@@ -1,17 +1,21 @@
 /**
  * Client-side API utilities for fetching About and FAQ data
- * This uses the server-only functions when needed
+ * Uses TanStack Start server functions for safe server communication
  */
 
 import type { FAQItem, AboutResponse } from "@/types/api";
+import { fetchAllFaqsFn, searchFaqsFn, getFaqCategoriesFn, fetchAboutDataFn } from "./api-endpoints";
 
 /**
  * Get all FAQs
  */
 export async function fetchAllFaqs(): Promise<FAQItem[]> {
-  // For now, return empty array
-  // In a real app, this would fetch from a server endpoint
-  return [];
+  try {
+    return await fetchAllFaqsFn();
+  } catch (error) {
+    console.error("Failed to fetch FAQs:", error);
+    return [];
+  }
 }
 
 /**
@@ -21,25 +25,36 @@ export async function searchFaqsData(
   query: string = "",
   category: string = "All"
 ): Promise<FAQItem[]> {
-  // For now, return empty array
-  // In a real app, this would fetch from a server endpoint
-  return [];
+  try {
+    return await searchFaqsFn({ query, category });
+  } catch (error) {
+    console.error("Failed to search FAQs:", error);
+    return [];
+  }
 }
 
 /**
  * Get unique FAQ categories
  */
 export async function getFaqCategories(): Promise<string[]> {
-  // For now, return default
-  // In a real app, this would fetch from a server endpoint
-  return ["All"];
+  try {
+    return await getFaqCategoriesFn();
+  } catch (error) {
+    console.error("Failed to fetch FAQ categories:", error);
+    return ["All"];
+  }
 }
 
 /**
  * Get About page data
  */
 export async function fetchAboutData(): Promise<AboutResponse> {
-  return { sections: [], founders: [] };
+  try {
+    return await fetchAboutDataFn();
+  } catch (error) {
+    console.error("Failed to fetch About data:", error);
+    return { sections: [], founders: [] };
+  }
 }
 
 /**

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "@tanstack/react-router";
 import { Menu, X } from "lucide-react";
 import logo from "@/assets/logo-full.png";
@@ -17,11 +17,22 @@ const navLinks = [
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
   const isMobile = useIsMobile();
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollTop = window.scrollY;
+      setIsScrolled(scrollTop > 50); // Hide logo after 50px scroll
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between bg-transparent px-6 py-6 sm:px-8 md:px-8 md:py-7 lg:px-16">
-      <Link to="/" className="flex items-center gap-3 py-2">
+      <Link to="/" className={`flex items-center gap-3 py-2 transition-opacity duration-300 ${isMobile && isScrolled ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
         <img src={logo} alt="BurrowSpace" className="h-13 w-auto" />
       </Link>
 

@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as FaqsRouteImport } from './routes/faqs'
 import { Route as ContactusRouteImport } from './routes/contactus'
+import { Route as ApiTestRouteImport } from './routes/api-test'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
 
@@ -22,6 +23,11 @@ const FaqsRoute = FaqsRouteImport.update({
 const ContactusRoute = ContactusRouteImport.update({
   id: '/contactus',
   path: '/contactus',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiTestRoute = ApiTestRouteImport.update({
+  id: '/api-test',
+  path: '/api-test',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AboutRoute = AboutRouteImport.update({
@@ -38,12 +44,14 @@ const IndexRoute = IndexRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/api-test': typeof ApiTestRoute
   '/contactus': typeof ContactusRoute
   '/faqs': typeof FaqsRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/api-test': typeof ApiTestRoute
   '/contactus': typeof ContactusRoute
   '/faqs': typeof FaqsRoute
 }
@@ -51,20 +59,22 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/api-test': typeof ApiTestRoute
   '/contactus': typeof ContactusRoute
   '/faqs': typeof FaqsRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/about' | '/contactus' | '/faqs'
+  fullPaths: '/' | '/about' | '/api-test' | '/contactus' | '/faqs'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/about' | '/contactus' | '/faqs'
-  id: '__root__' | '/' | '/about' | '/contactus' | '/faqs'
+  to: '/' | '/about' | '/api-test' | '/contactus' | '/faqs'
+  id: '__root__' | '/' | '/about' | '/api-test' | '/contactus' | '/faqs'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRoute: typeof AboutRoute
+  ApiTestRoute: typeof ApiTestRoute
   ContactusRoute: typeof ContactusRoute
   FaqsRoute: typeof FaqsRoute
 }
@@ -83,6 +93,13 @@ declare module '@tanstack/react-router' {
       path: '/contactus'
       fullPath: '/contactus'
       preLoaderRoute: typeof ContactusRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api-test': {
+      id: '/api-test'
+      path: '/api-test'
+      fullPath: '/api-test'
+      preLoaderRoute: typeof ApiTestRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/about': {
@@ -105,6 +122,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
+  ApiTestRoute: ApiTestRoute,
   ContactusRoute: ContactusRoute,
   FaqsRoute: FaqsRoute,
 }

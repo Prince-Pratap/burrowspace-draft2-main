@@ -179,6 +179,12 @@ function FAQsPage() {
                 type="text"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    // Trigger search immediately on Enter
+                    setQuery(e.currentTarget.value);
+                  }
+                }}
                 placeholder="Search questions..."
                 className="w-full rounded-full border border-white/15 bg-white/[0.04] px-5 sm:px-6 py-3 sm:py-4 pr-12 sm:pr-14 text-xs sm:text-sm text-white placeholder:text-white/40 backdrop-blur-md outline-none transition-all duration-300 focus:border-white/50 focus:bg-white/[0.08]"
               />
