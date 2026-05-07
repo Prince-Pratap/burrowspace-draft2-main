@@ -1,0 +1,54 @@
+{
+  "items": [
+    {
+      "q": "What is BurrowSpace?",
+      "a": "BurrowSpace is a sovereign, India-built digital infrastructure platform designed to provide secure, encrypted data storage and communication services. We believe privacy is a fundamental right, not a privilege, and we're building tools that make privacy effortless.",
+      "category": "General"
+    },
+    {
+      "q": "How does BurrowSpace ensure my data is private?",
+      "a": "We use end-to-end encryption for all data stored on our platform. Your encryption keys are generated locally on your device, and we never have access to them. This means only you can decrypt your data, regardless of any legal requests or data breaches.",
+      "category": "Security"
+    },
+    {
+      "q": "Where is my data stored?",
+      "a": "Your data is stored on servers located within India, ensuring data sovereignty and compliance with Indian data protection laws. We own and operate our entire infrastructure, eliminating dependence on foreign cloud providers.",
+      "category": "Privacy"
+    },
+    {
+      "q": "Is BurrowSpace free to use?",
+      "a": "BurrowSpace offers a free tier with basic features and limited storage. For advanced features and higher storage limits, we offer paid plans. We also offer enterprise solutions for organizations.",
+      "category": "Product"
+    },
+    {
+      "q": "How do I get started with BurrowSpace?",
+      "a": "Visit our website and sign up for a free account. No credit card is required for the free tier. Once you're registered, you can start uploading files and inviting others to collaborate securely.",
+      "category": "Getting Started"
+    },
+    {
+      "q": "Can I export my data from BurrowSpace?",
+      "a": "Yes, you can export your data at any time in standard formats. We believe your data belongs to you, and we don't lock you into our platform. You can take your data elsewhere whenever you want.",
+      "category": "Product"
+    },
+    {
+      "q": "Does BurrowSpace work on mobile devices?",
+      "a": "Yes, BurrowSpace is designed to be mobile-friendly and responsive. You can access your data from any device with a web browser. We're also working on native mobile apps for iOS and Android.",
+      "category": "Getting Started"
+    },
+    {
+      "q": "How do you handle law enforcement requests?",
+      "a": "We have a strict policy regarding law enforcement requests. We publish a transparency report and will only comply with lawful requests that provide proper legal documentation. However, since we cannot decrypt your data without your encryption keys, we cannot provide access even if compelled to do so.",
+      "category": "Privacy"
+    },
+    {
+      "q": "Is BurrowSpace compliant with international regulations?",
+      "a": "BurrowSpace complies with Indian data protection laws and international standards. We follow best practices from GDPR, CCPA, and other privacy regulations where applicable. Our infrastructure is regularly audited for security and compliance.",
+      "category": "Security"
+    },
+    {
+      "q": "How can I contact support?",
+      "a": "You can contact our support team through the Contact Us page on our website. We respond to all inquiries within 24 hours with help from real humans, not automated chatbots.",
+      "category": "General"
+    }
+  ]
+}

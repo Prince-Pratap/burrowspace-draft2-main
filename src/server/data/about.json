@@ -1,0 +1,47 @@
+{
+  "sections": [
+    {
+      "id": "aim",
+      "label": "AIM",
+      "title": "Privacy Is a Promise, Not a Myth",
+      "content": "Privacy was never a privilege — it's a fundamental right. At BurrowSpace, we exist to ensure that every byte of your data remains truly yours. In a world where surveillance has become the norm, we're building the tools that make privacy not just possible, but effortless.",
+      "highlight": "Privacy is no longer a myth — it's a promise we deliver.",
+      "image": "about-aim.jpg",
+      "reverse": false
+    },
+    {
+      "id": "vision",
+      "label": "VISION",
+      "title": "Sovereign Infrastructure, Built in India",
+      "content": "Born in India, engineered for sovereignty. BurrowSpace is building a future where your digital infrastructure isn't dependent on foreign servers or overseas corporations. We believe that true data independence means owning the entire stack — from encryption to infrastructure — right here on Indian soil.",
+      "highlight": "Made in India. Controlled by you. Dependent on no one.",
+      "image": "about-vision.jpg",
+      "reverse": true
+    },
+    {
+      "id": "motive",
+      "label": "MOTIVE",
+      "title": "Own Your Digital Narrative",
+      "content": "Every click, every message, every file — they tell the story of who you are. Our motive is simple: give people the power to own their digital narrative. We build encryption-first products that put the user back in the driver's seat, stripping away the surveillance economy one layer at a time.",
+      "highlight": null,
+      "image": "about-motive.jpg",
+      "reverse": false
+    }
+  ],
+  "founders": [
+    {
+      "id": "founder1",
+      "name": "Founder 1",
+      "role": "CO-FOUNDER, BURROWSPACE",
+      "quote": "Quote to be added...",
+      "reverse": false
+    },
+    {
+      "id": "founder2",
+      "name": "Founder 2",
+      "role": "CO-FOUNDER, BURROWSPACE",
+      "quote": "Quote to be added...",
+      "reverse": true
+    }
+  ]
+}

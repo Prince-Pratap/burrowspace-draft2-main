@@ -1,5 +1,11 @@
+"use client";
+
+import { useState } from "react";
 import { Link } from "@tanstack/react-router";
+import { Menu, X } from "lucide-react";
 import logo from "@/assets/logo-full.png";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 const navLinks = [
   { label: "ABOUT US", to: "/about" },
@@ -10,13 +16,17 @@ const navLinks = [
 ];
 
 export default function Navbar() {
+  const [isOpen, setIsOpen] = useState(false);
+  const isMobile = useIsMobile();
+
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between bg-transparent px-8 py-7 lg:px-16">
+    <nav className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between bg-transparent px-6 py-6 sm:px-8 md:px-8 md:py-7 lg:px-16">
       <Link to="/" className="flex items-center gap-3 py-2">
         <img src={logo} alt="BurrowSpace" className="h-13 w-auto" />
       </Link>
 
-      <div className="hidden items-center gap-2 lg:flex">
+      {/* Desktop Navigation */}
+      <div className="hidden items-center gap-2 md:flex">
         {navLinks.map((link) =>
           link.to.startsWith("/") ? (
             <Link
@@ -37,11 +47,50 @@ export default function Navbar() {
         )}
       </div>
 
-      <button
-        className="hidden rounded-none border border-white px-7 py-3 text-xs font-semibold tracking-[0.15em] text-white transition-colors hover:bg-white hover:text-[oklch(0.08_0.02_260)] lg:inline-flex"
-      >
-      JOIN US
+      <button className="hidden rounded-none border border-white px-7 py-3 text-xs font-semibold tracking-[0.15em] text-white transition-colors hover:bg-white hover:text-[oklch(0.08_0.02_260)] md:inline-flex">
+        JOIN US
       </button>
+
+      {/* Mobile Navigation Menu */}
+      {isMobile && (
+        <Sheet open={isOpen} onOpenChange={setIsOpen}>
+          <SheetTrigger asChild>
+            <button className="inline-flex items-center justify-center h-12 w-12 rounded-md md:hidden" aria-label="Toggle menu">
+              {isOpen ? (
+                <X className="h-6 w-6 text-white" />
+              ) : (
+                <Menu className="h-6 w-6 text-white" />
+              )}
+            </button>
+          </SheetTrigger>
+          <SheetContent side="right" className="w-64 bg-[oklch(0.08_0.02_260)]">
+            <div className="flex flex-col gap-6 py-8">
+              {navLinks.map((link) =>
+                link.to.startsWith("/") ? (
+                  <Link
+                    key={link.label}
+                    to={link.to}
+                    className="text-sm font-medium tracking-[0.15em] text-white/80 transition-colors hover:text-white"
+                    onClick={() => setIsOpen(false)}
+                  >
+                    {link.label}
+                  </Link>
+                ) : (
+                  <span
+                    key={link.label}
+                    className="cursor-default text-sm font-medium tracking-[0.15em] text-white/80 transition-colors hover:text-white"
+                  >
+                    {link.label}
+                  </span>
+                )
+              )}
+              <button className="mt-4 rounded-none border border-white px-6 py-2 text-xs font-semibold tracking-[0.15em] text-white transition-colors hover:bg-white hover:text-[oklch(0.08_0.02_260)] w-full">
+                JOIN US
+              </button>
+            </div>
+          </SheetContent>
+        </Sheet>
+      )}
     </nav>
   );
 }
