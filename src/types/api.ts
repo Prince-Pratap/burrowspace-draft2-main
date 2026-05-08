@@ -37,6 +37,18 @@ export interface AboutResponse {
   founders: FounderCard[];
 }
 
+export interface ContactFormData {
+  firstName: string;
+  lastName: string;
+  email: string;
+  subject: string;
+  message: string;
+}
+
+export interface ContactSubmission extends ContactFormData {
+  submittedAt: string;
+}
+
 // Generic API Response Type
 export interface ApiResponse<T> {
   success: boolean;

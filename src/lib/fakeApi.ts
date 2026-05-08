@@ -1,10 +1,4 @@
-export type ContactFormData = {
-  firstName: string;
-  lastName: string;
-  email: string;
-  subject: string;
-  message: string;
-};
+import type { ContactFormData } from "@/types/api";
 
 export type FAQ = {
   q: string;

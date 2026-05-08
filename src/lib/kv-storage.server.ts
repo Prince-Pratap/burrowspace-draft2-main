@@ -3,7 +3,7 @@
  * This replaces the static JSON files with persistent KV storage
  */
 
-import type { FAQItem, AboutResponse } from "@/types/api";
+import type { FAQItem, AboutResponse, ContactFormData, ContactSubmission } from "@/types/api";
 
 // KV namespace binding (will be available in Cloudflare Workers environment)
 declare const FAQS_KV: KVNamespace;
@@ -18,6 +18,9 @@ const getAboutNamespace = (): KVNamespace | undefined => {
   if (typeof ABOUT_KV !== 'undefined') return ABOUT_KV;
   return (globalThis as any).ABOUT_KV ?? (globalThis as any).KV;
 };
+
+const getContactNamespace = (): KVNamespace | undefined => getAboutNamespace();
+const CONTACT_MESSAGES_KEY = "contact_messages";
 
 // Default data (fallback if KV is empty)
 const DEFAULT_FAQS: FAQItem[] = [
@@ -144,6 +147,41 @@ export async function saveAbout(about: AboutResponse): Promise<boolean> {
     }
   } catch (error) {
     console.error('Failed to save About data to KV:', error);
+  }
+  return false;
+}
+
+export async function getContactSubmissions(): Promise<ContactSubmission[]> {
+  try {
+    const kv = getContactNamespace();
+    if (kv) {
+      const data = await kv.get(CONTACT_MESSAGES_KEY);
+      if (data) {
+        return JSON.parse(data);
+      }
+      await kv.put(CONTACT_MESSAGES_KEY, JSON.stringify([]));
+      return [];
+    }
+  } catch (error) {
+    console.error('Failed to load contact submissions from KV:', error);
+  }
+  return [];
+}
+
+export async function saveContactSubmission(formData: ContactFormData): Promise<boolean> {
+  try {
+    const kv = getContactNamespace();
+    if (kv) {
+      const existing = await getContactSubmissions();
+      const submission: ContactSubmission = {
+        ...formData,
+        submittedAt: new Date().toISOString(),
+      };
+      await kv.put(CONTACT_MESSAGES_KEY, JSON.stringify([...existing, submission]));
+      return true;
+    }
+  } catch (error) {
+    console.error('Failed to save contact submission to KV:', error);
   }
   return false;
 }

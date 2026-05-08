@@ -1,9 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, type FormEvent } from "react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { submitContact, type ContactFormData } from "@/lib/fakeApi";
+import { submitContact, type ContactFormData } from "@/lib/api-utils";
 import logoIcon from "@/assets/logo-icon.png";
 
 export const Route = createFileRoute("/contactus")({
@@ -71,7 +71,7 @@ function ContactUsPage() {
   const handleFocus = (name: string) => () => setFocusedField(name);
   const handleBlur = () => setFocusedField(null);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (submitState === "submitting") return;
 

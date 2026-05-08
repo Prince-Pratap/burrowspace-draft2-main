@@ -1,6 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
-import { getAllFaqs, searchFaqs, getFaqCategories, getAbout, saveFaqs, saveAbout } from "@/lib/api-utils.server";
-import type { FAQItem, AboutResponse } from "@/types/api";
+import { getAllFaqs, searchFaqs, getFaqCategories, getAbout, saveFaqs, saveAbout, getContactSubmissions, saveContactSubmission } from "@/lib/api-utils.server";
+import type { FAQItem, AboutResponse, ContactFormData } from "@/types/api";
 
 /**
  * Server functions for API endpoints
@@ -45,4 +45,18 @@ export const saveAboutFn = createServerFn()
       throw new Error("Failed to save About data");
     }
     return { success: true };
+  });
+
+export const submitContactFn = createServerFn()
+  .handler(async (contactData: ContactFormData) => {
+    const success = await saveContactSubmission(contactData);
+    if (!success) {
+      throw new Error("Failed to save contact message");
+    }
+    return { success: true };
+  });
+
+export const fetchContactSubmissionsFn = createServerFn()
+  .handler(async () => {
+    return getContactSubmissions();
   });

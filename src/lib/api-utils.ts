@@ -3,8 +3,8 @@
  * Uses TanStack Start server functions for safe server communication
  */
 
-import type { FAQItem, AboutResponse } from "@/types/api";
-import { fetchAllFaqsFn, searchFaqsFn, getFaqCategoriesFn, fetchAboutDataFn, saveFaqsFn, saveAboutFn } from "./api-endpoints";
+import type { FAQItem, AboutResponse, ContactFormData } from "@/types/api";
+import { fetchAllFaqsFn, searchFaqsFn, getFaqCategoriesFn, fetchAboutDataFn, saveFaqsFn, saveAboutFn, submitContactFn } from "./api-endpoints";
 
 /**
  * Get all FAQs
@@ -85,6 +85,15 @@ export async function saveAbout(about: AboutResponse): Promise<{ success: boolea
     return await saveAboutFn(about);
   } catch (error) {
     console.error("Failed to save About data:", error);
+    throw error;
+  }
+}
+
+export async function submitContact(formData: ContactFormData): Promise<{ success: boolean }> {
+  try {
+    return await submitContactFn(formData);
+  } catch (error) {
+    console.error("Failed to submit contact data:", error);
     throw error;
   }
 }
