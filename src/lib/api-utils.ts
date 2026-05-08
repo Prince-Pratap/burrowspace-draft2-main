@@ -4,7 +4,7 @@
  */
 
 import type { FAQItem, AboutResponse } from "@/types/api";
-import { fetchAllFaqsFn, searchFaqsFn, getFaqCategoriesFn, fetchAboutDataFn } from "./api-endpoints";
+import { fetchAllFaqsFn, searchFaqsFn, getFaqCategoriesFn, fetchAboutDataFn, saveFaqsFn, saveAboutFn } from "./api-endpoints";
 
 /**
  * Get all FAQs
@@ -63,6 +63,30 @@ export async function fetchAboutData(): Promise<AboutResponse> {
 export async function fetchAboutSections() {
   const data = await fetchAboutData();
   return data.sections;
+}
+
+/**
+ * Save FAQs data
+ */
+export async function saveFaqs(faqs: FAQItem[]): Promise<{ success: boolean }> {
+  try {
+    return await saveFaqsFn(faqs);
+  } catch (error) {
+    console.error("Failed to save FAQs:", error);
+    throw error;
+  }
+}
+
+/**
+ * Save About data
+ */
+export async function saveAbout(about: AboutResponse): Promise<{ success: boolean }> {
+  try {
+    return await saveAboutFn(about);
+  } catch (error) {
+    console.error("Failed to save About data:", error);
+    throw error;
+  }
 }
 
 /**

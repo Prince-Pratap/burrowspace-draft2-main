@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import { fetchAllFaqs, searchFaqsData, fetchAboutData } from "@/lib/api-utils";
+import { fetchAllFaqs, fetchAboutData } from "@/lib/api-utils";
 
 export const Route = createFileRoute("/api-test")({
   head: () => ({
@@ -16,10 +16,8 @@ export const Route = createFileRoute("/api-test")({
 
 function APITestPage() {
   const [faqData, setFaqData] = useState<any>(null);
-  const [searchResults, setSearchResults] = useState<any>(null);
   const [aboutData, setAboutData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
-  const [searchQuery, setSearchQuery] = useState("privacy");
 
   useEffect(() => {
     const testAPI = async () => {
@@ -28,10 +26,6 @@ function APITestPage() {
         // Test FAQ fetch
         const faqs = await fetchAllFaqs();
         setFaqData(faqs);
-
-        // Test search
-        const search = await searchFaqsData(searchQuery);
-        setSearchResults(search);
 
         // Test About data
         const about = await fetchAboutData();
@@ -44,12 +38,7 @@ function APITestPage() {
     };
 
     testAPI();
-  }, [searchQuery]);
-
-  const testSearch = async () => {
-    const results = await searchFaqsData(searchQuery);
-    setSearchResults(results);
-  };
+  }, []);
 
   return (
     <>
@@ -85,40 +74,6 @@ function APITestPage() {
                 </div>
               </div>
 
-              {/* Search Test */}
-              <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-6">
-                <h2 className="mb-4 text-xl font-semibold">Search Test</h2>
-                <div className="mb-4 flex gap-2">
-                  <input
-                    type="text"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    placeholder="Search FAQs..."
-                    className="flex-1 rounded border border-white/15 bg-white/[0.04] px-3 py-2 text-sm"
-                  />
-                  <button
-                    onClick={testSearch}
-                    className="rounded border border-white/15 px-4 py-2 text-sm hover:bg-white/10"
-                  >
-                    Test Search
-                  </button>
-                </div>
-                <div>
-                  <p className="text-sm text-white/70 mb-2">Search results for "{searchQuery}": {searchResults?.length || 0}</p>
-                  {searchResults && searchResults.length > 0 ? (
-                    <div className="space-y-2">
-                      {searchResults.slice(0, 2).map((faq: any, i: number) => (
-                        <div key={i} className="rounded border border-white/10 p-3">
-                          <p className="font-medium">{faq.q}</p>
-                        </div>
-                      ))}
-                    </div>
-                  ) : (
-                    <p className="text-yellow-400">⚠️ No search results</p>
-                  )}
-                </div>
-              </div>
-
               {/* About Data Test */}
               <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-6">
                 <h2 className="mb-4 text-xl font-semibold">About Data Test</h2>
@@ -149,12 +104,6 @@ function APITestPage() {
                       {faqData && faqData.length > 0 ? "✅" : "❌"}
                     </span>
                     <span>FAQ API</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <span className={searchResults !== null ? "text-green-400" : "text-red-400"}>
-                      {searchResults !== null ? "✅" : "❌"}
-                    </span>
-                    <span>Search API</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <span className={aboutData && aboutData.sections ? "text-green-400" : "text-red-400"}>

@@ -4,4 +4,16 @@
   "compatibility_date": "2025-09-24",
   "compatibility_flags": ["nodejs_compat"],
   "main": "@tanstack/react-start/server-entry",
+  "kv_namespaces": [
+    {
+      "binding": "FAQS_KV",
+      "id": "faqs_data",
+      "preview_id": "faqs_data"
+    },
+    {
+      "binding": "ABOUT_KV",
+      "id": "about_data",
+      "preview_id": "about_data"
+    }
+  ]
 }

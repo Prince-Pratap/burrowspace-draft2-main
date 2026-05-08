@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as FaqsRouteImport } from './routes/faqs'
 import { Route as ContactusRouteImport } from './routes/contactus'
 import { Route as ApiTestRouteImport } from './routes/api-test'
+import { Route as AdminRouteImport } from './routes/admin'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
 
@@ -30,6 +31,11 @@ const ApiTestRoute = ApiTestRouteImport.update({
   path: '/api-test',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminRoute = AdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AboutRoute = AboutRouteImport.update({
   id: '/about',
   path: '/about',
@@ -44,6 +50,7 @@ const IndexRoute = IndexRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/admin': typeof AdminRoute
   '/api-test': typeof ApiTestRoute
   '/contactus': typeof ContactusRoute
   '/faqs': typeof FaqsRoute
@@ -51,6 +58,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/admin': typeof AdminRoute
   '/api-test': typeof ApiTestRoute
   '/contactus': typeof ContactusRoute
   '/faqs': typeof FaqsRoute
@@ -59,21 +67,30 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/admin': typeof AdminRoute
   '/api-test': typeof ApiTestRoute
   '/contactus': typeof ContactusRoute
   '/faqs': typeof FaqsRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/about' | '/api-test' | '/contactus' | '/faqs'
+  fullPaths: '/' | '/about' | '/admin' | '/api-test' | '/contactus' | '/faqs'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/about' | '/api-test' | '/contactus' | '/faqs'
-  id: '__root__' | '/' | '/about' | '/api-test' | '/contactus' | '/faqs'
+  to: '/' | '/about' | '/admin' | '/api-test' | '/contactus' | '/faqs'
+  id:
+    | '__root__'
+    | '/'
+    | '/about'
+    | '/admin'
+    | '/api-test'
+    | '/contactus'
+    | '/faqs'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRoute: typeof AboutRoute
+  AdminRoute: typeof AdminRoute
   ApiTestRoute: typeof ApiTestRoute
   ContactusRoute: typeof ContactusRoute
   FaqsRoute: typeof FaqsRoute
@@ -102,6 +119,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiTestRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin': {
+      id: '/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/about': {
       id: '/about'
       path: '/about'
@@ -122,6 +146,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
+  AdminRoute: AdminRoute,
   ApiTestRoute: ApiTestRoute,
   ContactusRoute: ContactusRoute,
   FaqsRoute: FaqsRoute,

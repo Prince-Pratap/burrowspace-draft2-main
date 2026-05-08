@@ -3,7 +3,6 @@ import { useEffect, useRef, useState } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { type FAQ, CATEGORIES, fetchFaqs, searchFaqs } from "@/lib/fakeApi";
-import { searchFaqsData, getFaqCategories } from "@/lib/api-utils";
 
 export const Route = createFileRoute("/faqs")({
   head: () => ({
@@ -16,7 +15,6 @@ export const Route = createFileRoute("/faqs")({
   }),
   component: FAQsPage,
 });
-
 
 function FAQItem({ faq, index, isOpen, onToggle }: { faq: FAQ; index: number; isOpen: boolean; onToggle: () => void }) {
   return (
@@ -102,13 +100,15 @@ function FAQsPage() {
     if (faqLoading) return;
 
     setSearching(true);
-    searchFaqsData(query, filter).then((results) => {
+    const runSearch = async () => {
+      const results = await searchFaqs(query, filter);
       if (!active) return;
       setDisplayedFaqs(results);
       setOpenIdx(null);
       setSearching(false);
-    });
+    };
 
+    runSearch();
     return () => {
       active = false;
     };
@@ -126,7 +126,6 @@ function FAQsPage() {
 
   return (
     <main className="relative min-h-screen overflow-hidden bg-[oklch(0.08_0.02_260)] text-white">
-      {/* Page-wide background — matches the GlobeHero feel */}
       <div className="pointer-events-none fixed inset-0 z-0">
         <div
           className="absolute inset-0"
@@ -150,136 +149,128 @@ function FAQsPage() {
       </div>
 
       <div className="relative z-10">
-      <Navbar />
+        <Navbar />
 
-      {/* Hero */}
-      <section
-        ref={heroRef}
-        className="relative flex min-h-[75vh] sm:min-h-[85vh] md:min-h-[90vh] items-center justify-center px-4 sm:px-6 pt-24 sm:pt-28 md:pt-32"
-      >
-        <div className="relative z-10 mx-auto max-w-4xl text-center">
-          <p className="mb-3 sm:mb-4 text-xs font-semibold tracking-[0.4em] text-white/60">
-            FAQs
-          </p>
-          <h1 className="mb-4 sm:mb-6 font-heading text-4xl sm:text-5xl font-bold leading-[1.05] tracking-tight md:text-7xl">
-            Questions,
-            <br />
-            <span className="italic text-white/70" style={{ fontFamily: "Georgia, serif" }}>
-              answered.
-            </span>
-          </h1>
-          <p className="mx-auto max-w-2xl text-sm sm:text-base text-white/70 md:text-lg">
-            Everything you need to know about BurrowSpace.
-          </p>
+        <section
+          ref={heroRef}
+          className="relative flex min-h-[75vh] sm:min-h-[85vh] md:min-h-[90vh] items-center justify-center px-4 sm:px-6 pt-24 sm:pt-28 md:pt-32"
+        >
+          <div className="relative z-10 mx-auto max-w-4xl text-center">
+            <p className="mb-3 sm:mb-4 text-xs font-semibold tracking-[0.4em] text-white/60">
+              FAQs
+            </p>
+            <h1 className="mb-4 sm:mb-6 font-heading text-4xl sm:text-5xl font-bold leading-[1.05] tracking-tight md:text-7xl">
+              Questions,
+              <br />
+              <span className="italic text-white/70" style={{ fontFamily: "Georgia, serif" }}>
+                answered.
+              </span>
+            </h1>
+            <p className="mx-auto max-w-2xl text-sm sm:text-base text-white/70 md:text-lg">
+              Everything you need to know about BurrowSpace.
+            </p>
 
-          {/* Search */}
-          <div className="mx-auto mt-8 sm:mt-10 max-w-xl px-2 sm:px-0">
-            <div className="relative">
-              <input
-                type="text"
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter') {
-                    // Trigger search immediately on Enter
-                    setQuery(e.currentTarget.value);
-                  }
-                }}
-                placeholder="Search questions..."
-                className="w-full rounded-full border border-white/15 bg-white/[0.04] px-5 sm:px-6 py-3 sm:py-4 pr-12 sm:pr-14 text-xs sm:text-sm text-white placeholder:text-white/40 backdrop-blur-md outline-none transition-all duration-300 focus:border-white/50 focus:bg-white/[0.08]"
-              />
-              <div className="absolute right-4 sm:right-5 top-1/2 -translate-y-1/2 text-white/50">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <circle cx="11" cy="11" r="8" />
-                  <path d="m21 21-4.3-4.3" />
-                </svg>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Category filter */}
-      <section className="px-4 sm:px-6 pb-6 sm:pb-8 pt-2 sm:pt-4">
-        <div className="mx-auto flex max-w-4xl flex-wrap justify-center gap-2 sm:gap-3">
-          {CATEGORIES.map((cat) => (
-            <button
-              key={cat}
-              onClick={() => setFilter(cat)}
-              className={`rounded-full border px-3 sm:px-5 py-1.5 sm:py-2 text-xs font-semibold tracking-[0.15em] transition-all duration-300 whitespace-nowrap ${
-                filter === cat
-                  ? "border-brand bg-brand text-white"
-                  : "border-white/15 bg-white/[0.03] text-white/70 hover:border-white/40 hover:text-white"
-              }`}
-            >
-              {cat.toUpperCase()}
-            </button>
-          ))}
-        </div>
-      </section>
-
-      {/* FAQ list */}
-      <section className="px-4 sm:px-6 pb-20 sm:pb-24 md:pb-32">
-        <div className="mx-auto max-w-3xl space-y-2 sm:space-y-3">
-          {faqLoading || searching ? (
-            <>
-              <div className="flex items-center justify-center gap-3 py-8 sm:py-10 text-xs sm:text-sm text-white/50">
-                <div className="h-4 w-4 rounded-full border-2 border-white/40 border-t-transparent animate-spin" />
-                <span>{faqLoading ? "Loading FAQs…" : "Searching FAQs…"}</span>
-              </div>
-              {[...Array(3)].map((_, index) => (
-                <div key={index} className="rounded-2xl border border-white/10 bg-white/[0.03] px-4 sm:px-6 py-4 sm:py-5 backdrop-blur-md">
-                  <div className="mb-4 h-5 w-2/3 rounded-full bg-white/10" />
-                  <div className="h-3 w-full rounded-full bg-white/5" />
-                  <div className="mt-3 h-3 w-[90%] rounded-full bg-white/5" />
-                  <div className="mt-2 h-3 w-[75%] rounded-full bg-white/5" />
+            <div className="mx-auto mt-8 sm:mt-10 max-w-xl px-2 sm:px-0">
+              <div className="relative">
+                <input
+                  type="text"
+                  value={query}
+                  onChange={(e) => setQuery(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      setQuery(e.currentTarget.value);
+                    }
+                  }}
+                  placeholder="Search questions..."
+                  className="w-full rounded-full border border-white/15 bg-white/[0.04] px-5 sm:px-6 py-3 sm:py-4 pr-12 sm:pr-14 text-xs sm:text-sm text-white placeholder:text-white/40 backdrop-blur-md outline-none transition-all duration-300 focus:border-white/50 focus:bg-white/[0.08]"
+                />
+                <div className="absolute right-4 sm:right-5 top-1/2 -translate-y-1/2 text-white/50">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <circle cx="11" cy="11" r="8" />
+                    <path d="m21 21-4.3-4.3" />
+                  </svg>
                 </div>
-              ))}
-            </>
-          ) : filtered.length === 0 ? (
-            <div className="py-16 sm:py-20 text-center text-xs sm:text-sm text-white/50">
-              No questions match your search. Try a different keyword.
-            </div>
-          ) : (
-            filtered.map((faq, i) => (
-              <FAQItem
-                key={faq.q}
-                faq={faq}
-                index={i}
-                isOpen={openIdx === i}
-                onToggle={() => setOpenIdx(openIdx === i ? null : i)}
-              />
-            ))
-          )}
-        </div>
-
-
-        {/* Still have questions CTA */}
-        <div className="mx-auto mt-16 sm:mt-24 max-w-3xl px-4 sm:px-0">
-          <div className="relative overflow-hidden rounded-3xl border border-white/15 bg-gradient-to-br from-white/[0.06] to-white/[0.02] p-6 sm:p-10 md:p-16 text-center backdrop-blur-md">
-            <div className="absolute -right-20 -top-20 h-60 w-60 rounded-full bg-white/5 blur-3xl" />
-            <div className="absolute -bottom-20 -left-20 h-60 w-60 rounded-full bg-white/5 blur-3xl" />
-            <div className="relative">
-              <p className="mb-2 sm:mb-3 text-xs font-semibold tracking-[0.3em] text-white/60">
-                STILL CURIOUS?
-              </p>
-              <h2 className="mb-3 sm:mb-4 font-heading text-2xl sm:text-3xl font-bold md:text-4xl">
-                We'd love to hear from you.
-              </h2>
-              <p className="mx-auto mb-6 sm:mb-8 max-w-xl text-xs sm:text-sm md:text-base text-white/70">
-                Reach out — a real human from our team will get back to you, not a chatbot.
-              </p>
-              <Link
-                to="/contactus"
-                className="inline-flex rounded-none border border-white px-6 sm:px-8 py-2 sm:py-3 text-xs font-semibold tracking-[0.2em] text-white transition-colors hover:bg-white hover:text-background"
-              >
-                CONTACT US
-              </Link>
+              </div>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
 
+        <section className="px-4 sm:px-6 pb-6 sm:pb-8 pt-2 sm:pt-4">
+          <div className="mx-auto flex max-w-4xl flex-wrap justify-center gap-2 sm:gap-3">
+            {CATEGORIES.map((cat) => (
+              <button
+                key={cat}
+                onClick={() => setFilter(cat)}
+                className={`rounded-full border px-3 sm:px-5 py-1.5 sm:py-2 text-xs font-semibold tracking-[0.15em] transition-all duration-300 whitespace-nowrap ${
+                  filter === cat
+                    ? "border-brand bg-brand text-white"
+                    : "border-white/15 bg-white/[0.03] text-white/70 hover:border-white/40 hover:text-white"
+                }`}
+              >
+                {cat.toUpperCase()}
+              </button>
+            ))}
+          </div>
+        </section>
+
+        <section className="px-4 sm:px-6 pb-20 sm:pb-24 md:pb-32">
+          <div className="mx-auto max-w-3xl space-y-2 sm:space-y-3">
+            {faqLoading || searching ? (
+              <>
+                <div className="flex items-center justify-center gap-3 py-8 sm:py-10 text-xs sm:text-sm text-white/50">
+                  <div className="h-4 w-4 rounded-full border-2 border-white/40 border-t-transparent animate-spin" />
+                  <span>{faqLoading ? "Loading FAQs…" : "Searching FAQs…"}</span>
+                </div>
+                {[...Array(3)].map((_, index) => (
+                  <div key={index} className="rounded-2xl border border-white/10 bg-white/[0.03] px-4 sm:px-6 py-4 sm:py-5 backdrop-blur-md">
+                    <div className="mb-4 h-5 w-2/3 rounded-full bg-white/10" />
+                    <div className="h-3 w-full rounded-full bg-white/5" />
+                    <div className="mt-3 h-3 w-[90%] rounded-full bg-white/5" />
+                    <div className="mt-2 h-3 w-[75%] rounded-full bg-white/5" />
+                  </div>
+                ))}
+              </>
+            ) : filtered.length === 0 ? (
+              <div className="py-16 sm:py-20 text-center text-xs sm:text-sm text-white/50">
+                No questions match your search. Try a different keyword.
+              </div>
+            ) : (
+              filtered.map((faq, i) => (
+                <FAQItem
+                  key={faq.q}
+                  faq={faq}
+                  index={i}
+                  isOpen={openIdx === i}
+                  onToggle={() => setOpenIdx(openIdx === i ? null : i)}
+                />
+              ))
+            )}
+          </div>
+
+          <div className="mx-auto mt-16 sm:mt-24 max-w-3xl px-4 sm:px-0">
+            <div className="relative overflow-hidden rounded-3xl border border-white/15 bg-gradient-to-br from-white/[0.06] to-white/[0.02] p-6 sm:p-10 md:p-16 text-center backdrop-blur-md">
+              <div className="absolute -right-20 -top-20 h-60 w-60 rounded-full bg-white/5 blur-3xl" />
+              <div className="absolute -bottom-20 -left-20 h-60 w-60 rounded-full bg-white/5 blur-3xl" />
+              <div className="relative">
+                <p className="mb-2 sm:mb-3 text-xs font-semibold tracking-[0.3em] text-white/60">
+                  STILL CURIOUS?
+                </p>
+                <h2 className="mb-3 sm:mb-4 font-heading text-2xl sm:text-3xl font-bold md:text-4xl">
+                  We'd love to hear from you.
+                </h2>
+                <p className="mx-auto mb-6 sm:mb-8 max-w-xl text-xs sm:text-sm md:text-base text-white/70">
+                  Reach out — a real human from our team will get back to you, not a chatbot.
+                </p>
+                <Link
+                  to="/contactus"
+                  className="inline-flex rounded-none border border-white px-6 sm:px-8 py-2 sm:py-3 text-xs font-semibold tracking-[0.2em] text-white transition-colors hover:bg-white hover:text-background"
+                >
+                  CONTACT US
+                </Link>
+              </div>
+            </div>
+          </div>
+        </section>
       </div>
       <Footer />
     </main>
