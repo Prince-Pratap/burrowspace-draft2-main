@@ -7,13 +7,13 @@
   "kv_namespaces": [
     {
       "binding": "FAQS_KV",
-      "id": "faqs_data",
-      "preview_id": "faqs_data"
+      "id": "f22bb9b2492f45b8bdefcb38e84b8318",
+      "preview_id": "f22bb9b2492f45b8bdefcb38e84b8318"
     },
     {
       "binding": "ABOUT_KV",
-      "id": "about_data",
-      "preview_id": "about_data"
+      "id": "0de2f413ae1942488f947797143b55fd",
+      "preview_id": "0de2f413ae1942488f947797143b55fd"
     }
   ]
 }
