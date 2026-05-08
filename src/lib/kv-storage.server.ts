@@ -5,6 +5,13 @@
 
 import type { FAQItem, AboutResponse, ContactFormData, ContactSubmission } from "@/types/api";
 
+declare global {
+  interface KVNamespace {
+    get(key: string): Promise<string | null>;
+    put(key: string, value: string): Promise<void>;
+  }
+}
+
 // Cloudflare Worker bindings - injected at runtime
 declare const FAQS_KV: KVNamespace | undefined;
 declare const ABOUT_KV: KVNamespace | undefined;
@@ -67,9 +74,13 @@ const DEFAULT_FAQS: FAQItem[] = [
 const DEFAULT_ABOUT: AboutResponse = {
   sections: [
     {
-      title: "Our Mission",
+      id: "mission",
       label: "mission",
-      content: "To provide secure and accessible digital asset management solutions."
+      title: "Our Mission",
+      content: "To provide secure and accessible digital asset management solutions.",
+      highlight: null,
+      image: "",
+      reverse: false,
     }
   ],
   founders: []
