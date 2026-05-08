@@ -190,8 +190,8 @@ function AboutPage() {
           </div>
         </section>
 
-        {/* Founder's Quotes */}
-        <section className="px-6 sm:px-8 py-16 sm:py-20 lg:px-16">
+        {/* Founder's Quotes — hidden until content is ready */}
+        {/* <section className="px-6 sm:px-8 py-16 sm:py-20 lg:px-16">
           <div className="mx-auto max-w-6xl">
             <RevealSection>
               <p className="mb-8 sm:mb-10 text-center text-xs font-semibold tracking-[0.4em] text-brand">FOUNDERS&apos; QUOTES</p>
@@ -212,7 +212,7 @@ function AboutPage() {
               />
             </div>
           </div>
-        </section>
+        </section> */}
 
         {/* Impact sections */}
         <section className="px-6 sm:px-8 py-12 sm:py-16 lg:px-16">
