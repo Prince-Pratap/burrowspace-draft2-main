@@ -9,6 +9,7 @@ import { env } from "cloudflare:workers";
 type KVNamespaceSubset = {
   get(key: string): Promise<string | null>;
   put(key: string, value: string): Promise<void>;
+  list(options?: { prefix?: string }): Promise<{ keys: { name: string }[] }>;
 };
 
 const getFaqsNamespace = (): KVNamespaceSubset | undefined => env.FAQS_KV;
@@ -152,16 +153,20 @@ export async function saveAbout(about: AboutResponse): Promise<boolean> {
   return false;
 }
 
+// Key format: contact:<email>  — one entry per email, latest submission wins
+// To list all: kv.list({ prefix: CONTACT_MESSAGES_KEY + ":" })
 export async function getContactSubmissions(): Promise<ContactSubmission[]> {
   try {
     const kv = getContactNamespace();
     if (kv) {
-      const data = await kv.get(CONTACT_MESSAGES_KEY);
-      if (data) {
-        return JSON.parse(data);
-      }
-      await kv.put(CONTACT_MESSAGES_KEY, JSON.stringify([]));
-      return [];
+      const { keys } = await kv.list({ prefix: CONTACT_MESSAGES_KEY + ":" });
+      const submissions = await Promise.all(
+        keys.map(async ({ name }) => {
+          const data = await kv.get(name);
+          return data ? (JSON.parse(data) as ContactSubmission) : null;
+        })
+      );
+      return submissions.filter(Boolean) as ContactSubmission[];
     }
   } catch (error) {
     console.error('Failed to load contact submissions from KV:', error);
@@ -173,9 +178,10 @@ export async function saveContactSubmission(formData: ContactFormData): Promise<
   try {
     const kv = getContactNamespace();
     if (!kv) return false;
-    const existing = await getContactSubmissions();
     const submission: ContactSubmission = { ...formData, submittedAt: new Date().toISOString() };
-    await kv.put(CONTACT_MESSAGES_KEY, JSON.stringify([...existing, submission]));
+    // Key: "contact_messages:<email>" — overwrites if same email resubmits
+    const key = `${CONTACT_MESSAGES_KEY}:${formData.email.toLowerCase().trim()}`;
+    await kv.put(key, JSON.stringify(submission));
     return true;
   } catch (error) {
     console.error('Failed to save contact submission:', error);
@@ -183,17 +189,22 @@ export async function saveContactSubmission(formData: ContactFormData): Promise<
   return false;
 }
 
+// Key format: join_us_submissions:<email>
 export async function getJoinUsSubmissions(): Promise<JoinUsSubmission[]> {
   try {
     const kv = getContactNamespace();
     if (kv) {
-      const data = await kv.get(JOIN_US_SUBMISSIONS_KEY);
-      if (data) return JSON.parse(data);
-      await kv.put(JOIN_US_SUBMISSIONS_KEY, JSON.stringify([]));
-      return [];
+      const { keys } = await kv.list({ prefix: JOIN_US_SUBMISSIONS_KEY + ":" });
+      const submissions = await Promise.all(
+        keys.map(async ({ name }) => {
+          const data = await kv.get(name);
+          return data ? (JSON.parse(data) as JoinUsSubmission) : null;
+        })
+      );
+      return submissions.filter(Boolean) as JoinUsSubmission[];
     }
   } catch (error) {
-    console.error('Failed to load join-us submissions:', error);
+    console.error('Failed to load join-us submissions from KV:', error);
   }
   return [];
 }
@@ -202,9 +213,10 @@ export async function saveJoinUsSubmission(formData: JoinUsFormData): Promise<bo
   try {
     const kv = getContactNamespace();
     if (!kv) return false;
-    const existing = await getJoinUsSubmissions();
     const submission: JoinUsSubmission = { ...formData, submittedAt: new Date().toISOString() };
-    await kv.put(JOIN_US_SUBMISSIONS_KEY, JSON.stringify([...existing, submission]));
+    // Key: "join_us_submissions:<email>"
+    const key = `${JOIN_US_SUBMISSIONS_KEY}:${formData.email.toLowerCase().trim()}`;
+    await kv.put(key, JSON.stringify(submission));
     return true;
   } catch (error) {
     console.error('Failed to save join-us submission:', error);
