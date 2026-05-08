@@ -4,16 +4,18 @@
   "compatibility_date": "2025-09-24",
   "compatibility_flags": ["nodejs_compat"],
   "main": "@tanstack/react-start/server-entry",
+  // KV: create 2 namespaces (dashboard or CLI), then put YOUR ids below — not another project's.
+  // Dashboard: https://dash.cloudflare.com → your account → Storage → KV → Create namespace
   "kv_namespaces": [
     {
       "binding": "FAQS_KV",
-      "id": "f22bb9b2492f45b8bdefcb38e84b8318",
-      "preview_id": "f22bb9b2492f45b8bdefcb38e84b8318"
+      "id": "9ac1f9f1054a499b88d07f36a4c59fb9",
+      "preview_id": "9ac1f9f1054a499b88d07f36a4c59fb9"
     },
     {
       "binding": "ABOUT_KV",
-      "id": "0de2f413ae1942488f947797143b55fd",
-      "preview_id": "0de2f413ae1942488f947797143b55fd"
+      "id": "af9c1421ac5d40fba5f02940ad0ad497",
+      "preview_id": "af9c1421ac5d40fba5f02940ad0ad497"
     }
   ]
 }
