@@ -3,27 +3,27 @@
     {
       "id": "aim",
       "label": "AIM",
-      "title": "Privacy Is a Promise, Not a Myth",
+      "title": "Redefining privacy as a digital right, not a disappearing privilege.",
       "content": "At BurrowSpace, we aim to challenge the belief that privacy is fading in the digital age. We are building a future where data remains secure, seamless, and entirely under the user’s control. Our mission is to transform security from a privilege into a fundamental digital right.",
-      "highlight": "Redefining privacy as a digital right, not a disappearing privilege.",
+      "highlight": "Privacy is no longer a myth — it's a promise we deliver.",
       "image": "about-aim.jpg",
       "reverse": false
     },
     {
       "id": "vision",
       "label": "VISION",
-      "title": "Sovereign Infrastructure, Built in India",
+      "title": "Building a future where technology protects people, not profits from them.",
       "content": "The future belongs to systems that empower individuals with ownership, security, and freedom — where technology protects people, not profits from them.",
-      "highlight": "Building a future where technology protects people, not profits from them.",
+      "highlight": "Made in India. Controlled by you. Dependent on no one.",
       "image": "about-vision.jpg",
       "reverse": true
     },
     {
       "id": "motive",
       "label": "MOTIVE",
-      "title": "Own Your Digital Narrative",
+      "title": "Returning ownership of data to the people who create it.",
       "content": "BurrowSpace exists to return ownership of data to the people who create it. By enabling users to securely store information across personal devices and decentralized networks, we eliminate unnecessary dependence on traditional cloud providers. We believe privacy should not be rented through subscriptions — it should be permanently owned, protected, and accessible without compromise.",
-      "highlight": "Returning ownership of data to the people who create it.",
+      "highlight": null,
       "image": "about-motive.jpg",
       "reverse": false
     }

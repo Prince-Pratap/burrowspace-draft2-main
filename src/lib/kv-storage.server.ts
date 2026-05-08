@@ -4,6 +4,7 @@
  */
 
 import type { FAQItem, AboutResponse, ContactFormData, ContactSubmission, JoinUsFormData, JoinUsSubmission } from "@/types/api";
+import aboutSeed from "@/server/data/about.json";
 import { env } from "cloudflare:workers";
 
 type KVNamespaceSubset = {
@@ -34,20 +35,7 @@ const DEFAULT_FAQS: FAQItem[] = [
   }
 ];
 
-const DEFAULT_ABOUT: AboutResponse = {
-  sections: [
-    {
-      id: "mission",
-      label: "mission",
-      title: "Our Mission",
-      content: "To provide secure and accessible digital asset management solutions.",
-      highlight: null,
-      image: "",
-      reverse: false,
-    }
-  ],
-  founders: []
-};
+const DEFAULT_ABOUT: AboutResponse = aboutSeed as AboutResponse;
 
 /**
  * Get all FAQs from KV storage
