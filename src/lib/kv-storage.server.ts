@@ -5,18 +5,44 @@
 
 import type { FAQItem, AboutResponse, ContactFormData, ContactSubmission } from "@/types/api";
 
-// KV namespace binding (will be available in Cloudflare Workers environment)
-declare const FAQS_KV: KVNamespace;
-declare const ABOUT_KV: KVNamespace;
+// Declare KV namespace bindings for TypeScript (these are injected by Cloudflare Workers)
+declare global {
+  const FAQS_KV: KVNamespace;
+  const ABOUT_KV: KVNamespace;
+}
 
 const getFaqsNamespace = (): KVNamespace | undefined => {
-  if (typeof FAQS_KV !== 'undefined') return FAQS_KV;
-  return (globalThis as any).FAQS_KV ?? (globalThis as any).KV;
+  try {
+    // Try direct global first (Cloudflare Workers injection)
+    if (typeof FAQS_KV !== 'undefined') return FAQS_KV;
+  } catch (e) {
+    // TypeScript error if not defined, catch silently
+  }
+
+  try {
+    // Try globalThis
+    const env = (globalThis as any);
+    if (env.FAQS_KV) return env.FAQS_KV;
+  } catch (e) {}
+
+  return undefined;
 };
 
 const getAboutNamespace = (): KVNamespace | undefined => {
-  if (typeof ABOUT_KV !== 'undefined') return ABOUT_KV;
-  return (globalThis as any).ABOUT_KV ?? (globalThis as any).KV;
+  try {
+    // Try direct global first (Cloudflare Workers injection)
+    if (typeof ABOUT_KV !== 'undefined') return ABOUT_KV;
+  } catch (e) {
+    // TypeScript error if not defined, catch silently
+  }
+
+  try {
+    // Try globalThis
+    const env = (globalThis as any);
+    if (env.ABOUT_KV) return env.ABOUT_KV;
+  } catch (e) {}
+
+  return undefined;
 };
 
 const getContactNamespace = (): KVNamespace | undefined => getAboutNamespace();
@@ -171,15 +197,18 @@ export async function getContactSubmissions(): Promise<ContactSubmission[]> {
 export async function saveContactSubmission(formData: ContactFormData): Promise<boolean> {
   try {
     const kv = getContactNamespace();
-    if (kv) {
-      const existing = await getContactSubmissions();
-      const submission: ContactSubmission = {
-        ...formData,
-        submittedAt: new Date().toISOString(),
-      };
-      await kv.put(CONTACT_MESSAGES_KEY, JSON.stringify([...existing, submission]));
-      return true;
+    if (!kv) {
+      console.error('Contact KV namespace is not available in this environment');
+      return false;
     }
+    const existing = await getContactSubmissions();
+    const submission: ContactSubmission = {
+      ...formData,
+      submittedAt: new Date().toISOString(),
+    };
+    await kv.put(CONTACT_MESSAGES_KEY, JSON.stringify([...existing, submission]));
+    console.log('Contact submission saved successfully');
+    return true;
   } catch (error) {
     console.error('Failed to save contact submission to KV:', error);
   }
