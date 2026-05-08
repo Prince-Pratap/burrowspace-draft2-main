@@ -9,6 +9,16 @@ import type { FAQItem, AboutResponse } from "@/types/api";
 declare const FAQS_KV: KVNamespace;
 declare const ABOUT_KV: KVNamespace;
 
+const getFaqsNamespace = (): KVNamespace | undefined => {
+  if (typeof FAQS_KV !== 'undefined') return FAQS_KV;
+  return (globalThis as any).FAQS_KV ?? (globalThis as any).KV;
+};
+
+const getAboutNamespace = (): KVNamespace | undefined => {
+  if (typeof ABOUT_KV !== 'undefined') return ABOUT_KV;
+  return (globalThis as any).ABOUT_KV ?? (globalThis as any).KV;
+};
+
 // Default data (fallback if KV is empty)
 const DEFAULT_FAQS: FAQItem[] = [
   {
@@ -39,14 +49,14 @@ const DEFAULT_ABOUT: AboutResponse = {
  */
 export async function getAllFaqs(): Promise<FAQItem[]> {
   try {
-    // Check if running in Cloudflare Workers environment
-    if (typeof FAQS_KV !== 'undefined') {
-      const data = await FAQS_KV.get('faqs');
+    const kv = getFaqsNamespace();
+    if (kv) {
+      const data = await kv.get('faqs');
       if (data) {
         return JSON.parse(data);
       }
       // Initialize with default data
-      await FAQS_KV.put('faqs', JSON.stringify(DEFAULT_FAQS));
+      await kv.put('faqs', JSON.stringify(DEFAULT_FAQS));
       return DEFAULT_FAQS;
     }
   } catch (error) {
@@ -88,8 +98,9 @@ export async function getFaqCategories(): Promise<string[]> {
  */
 export async function saveFaqs(faqs: FAQItem[]): Promise<boolean> {
   try {
-    if (typeof FAQS_KV !== 'undefined') {
-      await FAQS_KV.put('faqs', JSON.stringify(faqs));
+    const kv = getFaqsNamespace();
+    if (kv) {
+      await kv.put('faqs', JSON.stringify(faqs));
       return true;
     }
   } catch (error) {
@@ -103,13 +114,14 @@ export async function saveFaqs(faqs: FAQItem[]): Promise<boolean> {
  */
 export async function getAbout(): Promise<AboutResponse> {
   try {
-    if (typeof ABOUT_KV !== 'undefined') {
-      const data = await ABOUT_KV.get('about');
+    const kv = getAboutNamespace();
+    if (kv) {
+      const data = await kv.get('about');
       if (data) {
         return JSON.parse(data);
       }
       // Initialize with default data
-      await ABOUT_KV.put('about', JSON.stringify(DEFAULT_ABOUT));
+      await kv.put('about', JSON.stringify(DEFAULT_ABOUT));
       return DEFAULT_ABOUT;
     }
   } catch (error) {
@@ -125,8 +137,9 @@ export async function getAbout(): Promise<AboutResponse> {
  */
 export async function saveAbout(about: AboutResponse): Promise<boolean> {
   try {
-    if (typeof ABOUT_KV !== 'undefined') {
-      await ABOUT_KV.put('about', JSON.stringify(about));
+    const kv = getAboutNamespace();
+    if (kv) {
+      await kv.put('about', JSON.stringify(about));
       return true;
     }
   } catch (error) {
