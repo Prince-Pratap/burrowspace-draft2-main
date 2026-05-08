@@ -15,9 +15,11 @@ declare global {
 // Cloudflare Worker bindings - injected at runtime
 declare const FAQS_KV: KVNamespace | undefined;
 declare const ABOUT_KV: KVNamespace | undefined;
+declare const CONTACT_KV: KVNamespace | undefined;
 
 let faqsKVCache: KVNamespace | undefined;
 let aboutKVCache: KVNamespace | undefined;
+let contactKVCache: KVNamespace | undefined;
 
 // Initialize KV on first access - Cloudflare injects bindings into global scope
 const initializeKV = () => {
@@ -42,6 +44,17 @@ const initializeKV = () => {
       console.error('Error initializing ABOUT_KV:', e);
     }
   }
+
+  if (!contactKVCache) {
+    try {
+      contactKVCache = (globalThis as any).CONTACT_KV ?? (globalThis as any).ABOUT_KV;
+      if (!contactKVCache) {
+        console.warn('CONTACT_KV binding not found in globalThis; falling back to ABOUT_KV');
+      }
+    } catch (e) {
+      console.error('Error initializing CONTACT_KV:', e);
+    }
+  }
 };
 
 const getFaqsNamespace = (): KVNamespace | undefined => {
@@ -54,7 +67,10 @@ const getAboutNamespace = (): KVNamespace | undefined => {
   return aboutKVCache;
 };
 
-const getContactNamespace = (): KVNamespace | undefined => getAboutNamespace();
+const getContactNamespace = (): KVNamespace | undefined => {
+  initializeKV();
+  return contactKVCache;
+};
 const CONTACT_MESSAGES_KEY = "contact_messages";
 
 // Default data (fallback if KV is empty)
