@@ -5,44 +5,46 @@
 
 import type { FAQItem, AboutResponse, ContactFormData, ContactSubmission } from "@/types/api";
 
-// Declare KV namespace bindings for TypeScript (these are injected by Cloudflare Workers)
-declare global {
-  const FAQS_KV: KVNamespace;
-  const ABOUT_KV: KVNamespace;
-}
+// Cloudflare Worker bindings - injected at runtime
+declare const FAQS_KV: KVNamespace | undefined;
+declare const ABOUT_KV: KVNamespace | undefined;
+
+let faqsKVCache: KVNamespace | undefined;
+let aboutKVCache: KVNamespace | undefined;
+
+// Initialize KV on first access - Cloudflare injects bindings into global scope
+const initializeKV = () => {
+  if (!faqsKVCache) {
+    try {
+      faqsKVCache = (globalThis as any).FAQS_KV;
+      if (!faqsKVCache) {
+        console.warn('FAQS_KV binding not found in globalThis');
+      }
+    } catch (e) {
+      console.error('Error initializing FAQS_KV:', e);
+    }
+  }
+  
+  if (!aboutKVCache) {
+    try {
+      aboutKVCache = (globalThis as any).ABOUT_KV;
+      if (!aboutKVCache) {
+        console.warn('ABOUT_KV binding not found in globalThis');
+      }
+    } catch (e) {
+      console.error('Error initializing ABOUT_KV:', e);
+    }
+  }
+};
 
 const getFaqsNamespace = (): KVNamespace | undefined => {
-  try {
-    // Try direct global first (Cloudflare Workers injection)
-    if (typeof FAQS_KV !== 'undefined') return FAQS_KV;
-  } catch (e) {
-    // TypeScript error if not defined, catch silently
-  }
-
-  try {
-    // Try globalThis
-    const env = (globalThis as any);
-    if (env.FAQS_KV) return env.FAQS_KV;
-  } catch (e) {}
-
-  return undefined;
+  initializeKV();
+  return faqsKVCache;
 };
 
 const getAboutNamespace = (): KVNamespace | undefined => {
-  try {
-    // Try direct global first (Cloudflare Workers injection)
-    if (typeof ABOUT_KV !== 'undefined') return ABOUT_KV;
-  } catch (e) {
-    // TypeScript error if not defined, catch silently
-  }
-
-  try {
-    // Try globalThis
-    const env = (globalThis as any);
-    if (env.ABOUT_KV) return env.ABOUT_KV;
-  } catch (e) {}
-
-  return undefined;
+  initializeKV();
+  return aboutKVCache;
 };
 
 const getContactNamespace = (): KVNamespace | undefined => getAboutNamespace();
@@ -198,9 +200,15 @@ export async function saveContactSubmission(formData: ContactFormData): Promise<
   try {
     const kv = getContactNamespace();
     if (!kv) {
-      console.error('Contact KV namespace is not available in this environment');
+      console.error('Contact KV namespace is NOT available in this environment', {
+        hasFAQS_KV: !!(globalThis as any).FAQS_KV,
+        hasABOUT_KV: !!(globalThis as any).ABOUT_KV,
+        availableGlobals: Object.keys(globalThis).filter(k => k.toUpperCase().includes('KV')).slice(0, 10)
+      });
       return false;
     }
+    
+    console.log('Contact KV namespace found, proceeding with save');
     const existing = await getContactSubmissions();
     const submission: ContactSubmission = {
       ...formData,
@@ -214,3 +222,4 @@ export async function saveContactSubmission(formData: ContactFormData): Promise<
   }
   return false;
 }
+
